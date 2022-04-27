@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using MVC_Appointment.Models;
 using MVC_Appointment.Models.ViewModels;
+using System.Threading.Tasks;
 
 namespace MVC_Appointment.Controllers
 {
@@ -10,28 +11,36 @@ namespace MVC_Appointment.Controllers
         public readonly ApplicationDBContext _dbContext;
         UserManager<ApplicationUser> _userManager;
         SignInManager<ApplicationUser> _signInManager;
-        RoleManager<ApplicationUser> _roleManager;
+        RoleManager<IdentityRole> _roleManager;
 
 
 
-        public AccountController(ApplicationDBContext db, UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, RoleManager<ApplicationUser> roleManager)
+        public AccountController(ApplicationDBContext db, UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager
+            , RoleManager<IdentityRole> roleManager
+            )
         {
             _userManager=userManager;
             _signInManager=signInManager;
-            _roleManager=roleManager;
+            _roleManager = roleManager;
             _dbContext = db;
         }
         public IActionResult Login()
         {
             return View();
         }
-        public IActionResult Register()
+        public async Task<IActionResult> Register()
         {
+            if(!_roleManager.RoleExistsAsync(Utility.Helper.admin).GetAwaiter().GetResult())
+            {
+                await _roleManager.CreateAsync(new IdentityRole(Utility.Helper.admin));
+                await _roleManager.CreateAsync(new IdentityRole(Utility.Helper.doctor));
+                await _roleManager.CreateAsync(new IdentityRole(Utility.Helper.patient));
+            }
             return View();
         }
         [AutoValidateAntiforgeryToken]
         [HttpPost]
-        public  IActionResult Register(RegisterVM m)
+        public async Task<IActionResult> Register(RegisterVM m)
         {
             if(ModelState.IsValid)
             {
@@ -44,7 +53,10 @@ namespace MVC_Appointment.Controllers
                 var result=  _userManager.CreateAsync(_user).Result;
                 if (result.Succeeded)
                 {
-                    _signInManager.SignInAsync(_user,isPersistent:false);
+                    await _userManager.AddToRoleAsync(_user,m.RoleName);
+                    await _signInManager.SignInAsync(_user,isPersistent:false);
+
+                    return RedirectToAction("Index", "Home");
                 }
             }
             return View();
