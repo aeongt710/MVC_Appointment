@@ -1,0 +1,12 @@
+﻿<div>
+    <div>
+        @if (User.IsInRole(MVC_Appointment.Utility.Helper.admin))
+        {
+            <div class="col-2">
+                <label >Doctor List</label>
+                @Html.DropDownList("doctorId",new SelectList(ViewBag.docList,"Id","Name"),new {@class="form-control" })
+            </div>
+        }
+    </div>
+</div> 
+<div id="calendar"></div>
