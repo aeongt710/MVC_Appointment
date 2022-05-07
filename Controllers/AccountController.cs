@@ -24,10 +24,27 @@ namespace MVC_Appointment.Controllers
             _roleManager = roleManager;
             _dbContext = db;
         }
+
         public IActionResult Login()
         {
             return View();
         }
+        [ValidateAntiForgeryToken]
+        [HttpPost]
+        public async Task<IActionResult> Login(LoginViewModel vm)
+        {
+            if(ModelState.IsValid)
+            {
+                var signInResult = await _signInManager.PasswordSignInAsync(vm.Email, vm.Password,vm.RememberMe,false);
+                if(signInResult.Succeeded)
+                {
+                    return RedirectToAction("Index","Home");
+                }
+                ModelState.AddModelError("", "Invalid Login Attempt!");
+            }
+            return View(vm);
+        }
+
         public async Task<IActionResult> Register()
         {
             if(!_roleManager.RoleExistsAsync(Utility.Helper.admin).GetAwaiter().GetResult())
@@ -50,7 +67,7 @@ namespace MVC_Appointment.Controllers
                     Name = m.Name,
                     UserName= m.Email
                 };
-                var result=  _userManager.CreateAsync(_user).Result;
+                var result=  _userManager.CreateAsync(_user,m.Password).Result;
                 if (result.Succeeded)
                 {
                     await _userManager.AddToRoleAsync(_user,m.RoleName);
@@ -58,8 +75,19 @@ namespace MVC_Appointment.Controllers
 
                     return RedirectToAction("Index", "Home");
                 }
+                foreach(var item in result.Errors)
+                {
+                    ModelState.AddModelError("", item.Description);
+                }
             }
-            return View();
+            return View(m);
         }
+        [HttpPost]
+        public async Task<IActionResult> LogOff()
+        {
+            await _signInManager.SignOutAsync();
+            return RedirectToAction("Login","Account");
+        }
+
     }
 }

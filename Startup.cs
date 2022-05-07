@@ -51,6 +51,8 @@ namespace MVC_Appointment
 
             app.UseRouting();
 
+            app.UseAuthentication();
+
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
