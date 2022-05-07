@@ -18,7 +18,7 @@ namespace MVC_Appointment.Services
         {
             var docs = (from user in _db.Users
                         join userRoles in _db.UserRoles on user.Id equals userRoles.UserId
-                        join netRoles in _db.Roles.Where(a => a.Name == Helper.doctor) on userRoles.RoleId equals netRoles.Id
+                        join netRoles in _db.Roles.Where(a => a.Name == Helper.Doctor) on userRoles.RoleId equals netRoles.Id
                         select new DoctorVM
                         {
                             Id = user.Id,
@@ -33,7 +33,7 @@ namespace MVC_Appointment.Services
         {
             var patients = (from user in _db.Users
                         join userRoles in _db.UserRoles on user.Id equals userRoles.UserId
-                        join netRoles in _db.Roles.Where(a => a.Name == Helper.patient) on userRoles.RoleId equals netRoles.Id
+                        join netRoles in _db.Roles.Where(a => a.Name == Helper.Patient) on userRoles.RoleId equals netRoles.Id
                         select new PatientVM
                         {
                             Id = user.Id,

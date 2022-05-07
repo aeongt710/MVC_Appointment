@@ -1,6 +1,6 @@
 ﻿<div>
     <div>
-        @if (User.IsInRole(MVC_Appointment.Utility.Helper.admin))
+        @if (User.IsInRole(MVC_Appointment.Utility.Helper.Admin))
         {
             <div class="col-2">
                 <label >Doctor List</label>
@@ -9,4 +9,13 @@
         }
     </div>
 </div> 
-<div id="calendar"></div>
+<div class="container">
+    <div class="row full-calendar">
+
+        <div class="col-sm-9">
+            <div id="calendar"></div>
+        </div>
+    </div>
+</div>
+
+<partial name="_AddEditAppointment"/>

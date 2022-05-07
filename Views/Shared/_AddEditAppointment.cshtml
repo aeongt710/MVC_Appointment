@@ -1,0 +1,35 @@
+﻿<div class="modal fade" data-backdrop="static" id="appointmentInput" data-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="appointmentForm" class="p-3" autocomplete="off" novalidate="novalidate">
+                <div class="model-header">
+                    <h4 class="model-title">Add/Edit Appointment</h4>
+                </div>
+                <div class="model-body">
+                    <div class="form-group">
+                        <label for="title">Title</label>
+                        <input class="form-control" maxlength="100" type="text" id="title" />
+                    </div>
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <textarea class="form-control" type="text" id="description"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="title">Select Patient</label>
+                        <select id="patientId" asp-items="@(new SelectList(ViewBag.patientList,"Id","Name"))" class="form-control"></select>
+                    </div>
+                    <div class="form-group">
+                        <label for="title">Select Duration</label>
+                        <select id="patientId" asp-items="@(new SelectList(ViewBag.duration,"Value","Text"))" class="form-control"></select>
+                    </div>
+                    <input type="hidden" id="id"/>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" onclick="onCloseModel();">Close</button>&nbsp;
+                        <button type="button" id="btnSubmit" class="btn btn-success" onclick="onSubmitForm();">Save</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+</div>
