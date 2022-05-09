@@ -1,9 +1,11 @@
 ﻿using MVC_Appointment.Models;
 using MVC_Appointment.Models.ViewModels;
 using MVC_Appointment.Utility;
+using System;
 using System.Collections.Generic;
 //IMP for select
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace MVC_Appointment.Services
 {
@@ -14,6 +16,36 @@ namespace MVC_Appointment.Services
         {
             _db = db;
         }
+
+        public async Task<int> AddUpateAppointment(AppointmentVM model)
+        {
+            var startDate = DateTime.Parse(model.StartDate);
+            var endDate = DateTime.Parse(model.StartDate).AddMinutes(model.Duration);
+
+            if(model !=null && model.Id>0)
+            {
+                return 1;
+            }
+            else
+            {
+                Appointment _appointment = new Appointment()
+                {
+                    Title = model.Title,
+                    StartDate = startDate,
+                    EndDate = endDate,
+                    Description = model.Description,
+                    DoctorId = model.DoctorId,
+                    Duration = model.Duration,
+                    AdminId = model.AdminId,
+                    PatientId = model.PatientId,
+                    isDocApproved = false
+                };
+                _db.Appointments.Add(_appointment);
+                await _db.SaveChangesAsync();
+                return 2;
+            }
+        }
+
         public List<DoctorVM> getDoctorList()
         {
             var docs = (from user in _db.Users

@@ -9,5 +9,6 @@ namespace MVC_Appointment.Models
         {
 
         }
+        public DbSet<Appointment> Appointments { get; set; }
     }
 }
