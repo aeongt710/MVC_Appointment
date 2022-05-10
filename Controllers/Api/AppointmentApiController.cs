@@ -5,6 +5,7 @@ using MVC_Appointment.Models.ViewModels;
 using MVC_Appointment.Services;
 using MVC_Appointment.Utility;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 
@@ -46,9 +47,61 @@ namespace MVC_Appointment.Controllers.Api
                     commonResponse.message = Helper.appointmentAdded;
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
-                commonResponse.message=e.Message;
+                commonResponse.message = e.Message;
+                commonResponse.status = Helper.failure_code;
+            }
+            return Ok(commonResponse);
+        }
+
+        [HttpGet]
+        [Route("GetcalendarData")]
+        public IActionResult GetcalendarData(string docId)
+        {
+            CommonResponse<List<AppointmentVM>> commonResponse = new CommonResponse<List<AppointmentVM>>();
+            try
+            {
+                if (_role == Helper.Admin)
+                {
+                    commonResponse.dataenum = _appointmentService.GetAppointmentByDocId(docId);
+                    commonResponse.status = Helper.success_code;
+                }
+                else if (_role == Helper.Patient)
+                {
+                    commonResponse.dataenum = _appointmentService.GetAppointmentByPatientId(_loginUserId);
+                    commonResponse.status = Helper.success_code;
+                }
+                else if (_role == Helper.Doctor)
+                {
+                    commonResponse.dataenum = _appointmentService.GetAppointmentByDocId(_loginUserId);
+                    commonResponse.status = Helper.success_code;
+                }
+            }
+            catch (Exception e)
+            {
+                commonResponse.message = e.Message;
+                commonResponse.status = Helper.failure_code;
+            }
+            return Ok(commonResponse);
+
+        }
+        [HttpGet]
+        [Route("GetcalendarDataById/{Id}")]
+        public IActionResult GetcalendarDataById(int Id)
+        {
+            CommonResponse<AppointmentVM> commonResponse = new CommonResponse<AppointmentVM>();
+            try
+            {
+
+                    commonResponse.dataenum = _appointmentService.GetAppointmentById(Id);
+                    commonResponse.status = Helper.success_code;
+
+
+            }
+            catch (Exception e)
+            {
+                commonResponse.message = e.Message;
                 commonResponse.status = Helper.failure_code;
             }
             return Ok(commonResponse);

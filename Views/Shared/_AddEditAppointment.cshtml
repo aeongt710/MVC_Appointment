@@ -29,8 +29,20 @@
                     </div>
                     <input type="hidden" id="id" />
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" onclick="onCloseModel();">Close</button>&nbsp;
-                        <button type="button" id="btnSubmit" class="btn btn-success" onclick="onSubmitForm();">Save</button>
+                        
+                        @if(User.IsInRole(MVC_Appointment.Utility.Helper.Admin))
+                        {
+                            <button type="button" id="btnSubmit" class="btn btn-success" onclick="onSubmitForm();">Save</button>
+                            <button type="button" id="btnDelete" class="btn btn-danger hidden" onclick="onDeleteAppointment();">Delete</button>
+                        }
+                        @if(User.IsInRole(MVC_Appointment.Utility.Helper.Doctor))
+                        {
+                            <button type="button" id="btnSubmit" class="btn btn-warning" onclick="onConfirm();">Confirm</button>
+                            <button type="button" id="btnDelete" class="btn btn-danger  " onclick="onDeleteAppointment();">Delete</button>
+                        }
+                        
+                        <button type="button" class="btn btn-secondary" onclick="onCloseModel();">Close</button>
+
                     </div>
                 </div>
             </form>

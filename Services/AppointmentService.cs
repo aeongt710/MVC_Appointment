@@ -22,7 +22,7 @@ namespace MVC_Appointment.Services
             var startDate = DateTime.Parse(model.StartDate);
             var endDate = DateTime.Parse(model.StartDate).AddMinutes(model.Duration);
 
-            if(model !=null && model.Id>0)
+            if (model != null && model.Id > 0)
             {
                 return 1;
             }
@@ -46,6 +46,68 @@ namespace MVC_Appointment.Services
             }
         }
 
+        public List<AppointmentVM> GetAppointmentByDocId(string Id)
+        {
+            var appointments = _db.Appointments.Where(a => a.DoctorId == Id).Select(
+                b => new AppointmentVM
+                {
+                    Title = b.Title,
+                    Id = b.Id,
+                    Description = b.Description,
+                    StartDate = b.StartDate.ToString("yyyy-MM-dd HH:mm:ss"),
+                    EndDate = b.EndDate.ToString("yyyy-MM-dd HH:mm:ss"),
+                    Duration = b.Duration,
+                    isDocApproved = b.isDocApproved,
+                    DoctorId = b.DoctorId,
+                    PatientId = b.PatientId,
+                    DocName = _db.Users.Where(a => a.Id == b.DoctorId).Select(a => a.Name).FirstOrDefault(),
+                    PatientName = _db.Users.Where(a => a.Id == b.PatientId).Select(a => a.Name).FirstOrDefault()
+
+                }).ToList();
+            return appointments;
+        }
+
+        public AppointmentVM GetAppointmentById(int Id)
+        {
+            var appointment = _db.Appointments.Where(a => a.Id == Id).Select(b => new AppointmentVM
+            {
+                Title = b.Title,
+                Id = b.Id,
+                Description = b.Description,
+                StartDate = b.StartDate.ToString("yyyy-MM-dd HH:mm:ss"),
+                EndDate = b.EndDate.ToString("yyyy-MM-dd HH:mm:ss"),
+                Duration = b.Duration,
+                isDocApproved = b.isDocApproved,
+                DoctorId = b.DoctorId,
+                PatientId = b.PatientId,
+                DocName = _db.Users.Where(a => a.Id == b.DoctorId).Select(a => a.Name).FirstOrDefault(),
+                PatientName = _db.Users.Where(a => a.Id == b.PatientId).Select(a => a.Name).FirstOrDefault()
+
+            }).FirstOrDefault();
+
+            return appointment;
+        }
+
+        public List<AppointmentVM> GetAppointmentByPatientId(string Id)
+        {
+            var appointments = _db.Appointments.Where(a => a.PatientId == Id).Select(b => new AppointmentVM
+            {
+                Title = b.Title,
+                Id = b.Id,
+                Description = b.Description,
+                StartDate = b.StartDate.ToString("yyyy-MM-dd HH:mm:ss"),
+                EndDate = b.EndDate.ToString("yyyy-MM-dd HH:mm:ss"),
+                Duration = b.Duration,
+                isDocApproved = b.isDocApproved,
+                DoctorId = b.DoctorId,
+                PatientId = b.PatientId,
+                DocName = _db.Users.Where(a => a.Id == b.DoctorId).Select(a => a.Name).FirstOrDefault(),
+                PatientName = _db.Users.Where(a => a.Id == b.PatientId).Select(a => a.Name).FirstOrDefault()
+
+            }).ToList();
+            return appointments;
+        }
+
         public List<DoctorVM> getDoctorList()
         {
             var docs = (from user in _db.Users
@@ -64,13 +126,13 @@ namespace MVC_Appointment.Services
         public List<PatientVM> getPatientList()
         {
             var patients = (from user in _db.Users
-                        join userRoles in _db.UserRoles on user.Id equals userRoles.UserId
-                        join netRoles in _db.Roles.Where(a => a.Name == Helper.Patient) on userRoles.RoleId equals netRoles.Id
-                        select new PatientVM
-                        {
-                            Id = user.Id,
-                            Name = user.Name
-                        }
+                            join userRoles in _db.UserRoles on user.Id equals userRoles.UserId
+                            join netRoles in _db.Roles.Where(a => a.Name == Helper.Patient) on userRoles.RoleId equals netRoles.Id
+                            select new PatientVM
+                            {
+                                Id = user.Id,
+                                Name = user.Name
+                            }
                       )
                       .ToList();
             return patients;
